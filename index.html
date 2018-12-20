@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
+	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.js"></script>
+	<title>Verified FAQ</title>
+</head>
+<body>
+<header>
+	<h1>Verified FAQ</h1>
+</header>
+<div id="container">
+	<section class="cd-faq">
+		<ul v-if="!loading" class="cd-faq-categories">
+			<li @click="selectedCategory = key; selected = -1" v-for="(value, key) in faq"><a :class="selectedCategory == key ? 'selected' : ''" :href="'#/' + key">{{ key }}</a></li>
+		</ul> <!-- cd-faq-categories -->
+	
+		<div class="cd-faq-items">
+
+			<img v-if="loading" style="position: absolute; left: calc(50% - 32px)" src="./images/loader64.gif" alt="Loading..">
+
+			<ul v-if="!loading" class="cd-faq-group">
+				<li @click="toggle(index)" v-for="(qa, index) in faq[selectedCategory]">
+					<a class="cd-faq-trigger" :href="'#/' + qa[0] + '/' + qa[1]">{{ qa[2] }}</a>
+					<div v-show="selected == index" class="cd-faq-content">
+						<p>{{ qa[3] }}</p>
+					</div> <!-- cd-faq-content -->
+				</li>
+			</ul> <!-- cd-faq-group -->
+		</div> <!-- cd-faq-items -->
+
+<!-- 		<a href="#0" class="cd-close-panel">Close</a> -->
+	</section> <!-- cd-faq -->
+</div>
+<script>
+
+	var app = new Vue({
+
+		el: '#container',
+
+		data: {
+			loading: true,
+			selected: -1,
+			faq: {},
+			selectedCategory: ""
+		},
+
+		methods: {
+
+			toggle(index) {
+				this.selected = this.selected == index ? -1 : index;
+			},
+
+			parse(data) {
+				
+				data.shift();
+
+				var faq = {};
+
+				for(var i = 0; i < data.length; i++) {
+
+					var entry = data[i];
+					var category = entry[0];
+
+					if(!this.selectedCategory) this.selectedCategory = category;
+					if(!faq[category]) faq[category] = [];
+
+					faq[category].push(entry);
+				}
+
+				this.faq = faq;
+				this.loading = false;
+
+				if(window.location.hash) {
+					var parts = window.location.hash.split('/');
+					if(parts.length == 3) {
+						this.selectedCategory = parts[1];
+						for(var i = 0; i < this.faq[this.selectedCategory].length; i++) {
+							console.log(i);
+							if(this.faq[this.selectedCategory][i][1] == parts[2])
+								this.selected = i;
+						}
+					}
+				}
+
+			}
+
+		},
+
+		mounted() {
+
+			var self = this;
+
+			axios.get("https://sheets.veeo.no/raw/verified-faq/faq")
+			.then(function(res) {
+				self.parse(res.data);
+			})
+			.catch(function(err) {
+				console.log(err);
+			});
+
+		}
+
+	});
+
+</script>
+</body>
+</html>
