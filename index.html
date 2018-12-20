@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
 	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.2.3/polyfill.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.js"></script>
 	<title>Verified FAQ</title>
@@ -55,11 +56,11 @@
 
 		methods: {
 
-			toggle(index) {
+			toggle: function(index) {
 				this.selected = this.selected == index ? -1 : index;
 			},
 
-			parse(data) {
+			parse: function(data) {
 				
 				data.shift();
 
@@ -95,7 +96,7 @@
 
 		},
 
-		mounted() {
+		mounted: function() {
 
 			var self = this;
 
