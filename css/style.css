@@ -439,3 +439,21 @@ header h1 {
 .no-js .cd-faq-content {
   display: block;
 }
+
+@media only screen and (max-width: 750px) {
+  .cd-faq-categories {
+    width: 100%;
+    position: relative;
+  }
+
+  .cd-faq {
+    margin: 25px auto;
+  }
+  
+  .cd-faq-items {
+    padding-left: 0;
+    position: relative;
+    float: right;
+    margin-top: 20px;
+  }
+}
